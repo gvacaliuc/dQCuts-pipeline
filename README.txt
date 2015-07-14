@@ -2,11 +2,11 @@ dQCuts-pipeline is a full package for the analysis of proteins in python.  It be
 
 Dependencies:
 	I have tried my best to keep the dependencies down, but there are a few:
-		- MDAnalysis	- tool to manipulate the trajectories in python	(wqaa)
-		- Numpy			- ubiquitous numerical analysis package			(everything)
-		- Scipy			- provides sparse matrices						(pipeline/dncuts)
-		- Matplotlib	- ubiquitous graphing package					(everything)
-		- SciKit-Learn	- provides knn-functionality					(pipeline)
+		- MDAnalysis	- tool to manipulate the trajectories in python
+		- Numpy		- ubiquitous numerical analysis package
+		- Scipy		- provides sparse matrices
+		- Matplotlib	- ubiquitous graphing package
+		- SciKit-Learn	- provides knn-functionality
 
 Setup:
 	As there are two git-repositories housed under this repository, I wanted to alleviate the hassle of setup.  Thus, I created a small script to make all the necessary directories and pull all the necessary git repos.  Just run:
