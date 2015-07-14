@@ -51,13 +51,13 @@ def genConf_cqaa():
 	numberOfTraj = 1;
 	config['numOfTraj'] = numberOfTraj;
 
-	#	Residue to start on (0 for first) -- EDIT
+	#	Residue to start on (inclusive for cQAA, exclusive for dQAA, first is 0) -- EDIT
 	startRes = 0;
 	config['startRes'] = startRes;
 
-	#	Residue to iterate through (includes ith residue if you give positive number, -1 for all) -- EDIT
-	endRes = -1;
-	config['endRes'] = endRes;
+	#	Number of Residues to include (inclusive for cQAA, exclusive for dQAA) -- EDIT
+	numRes = 133;
+	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
 	icadim = 40;
