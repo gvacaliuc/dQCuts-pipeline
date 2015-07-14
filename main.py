@@ -59,7 +59,9 @@ else:
 	numSamples = icacoffs.shape[1];
 	if val.verbose: timing.log('dQAA complete...\n\nBeginning tree construction...');
 
-#	KNN		-----------------------------------------------------------------------------	
+#	KNN		-----------------------------------------------------------------------------
+
+#	This step determines how many dimensions we should consider when computing the k-neighbors	
 if val.setup:
 	pts = [];
 	timing.log('setup to determine adequate affinity subspace...');
