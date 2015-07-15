@@ -48,7 +48,7 @@ def genConf_cqaa():
 	config['startTraj'] = startTraj;
 
 	#	Number of trajectories to include -- EDIT
-	numberOfTraj = 1;
+	numberOfTraj = 5;
 	config['numOfTraj'] = numberOfTraj;
 
 	#	Residue to start on (inclusive for cQAA, exclusive for dQAA, first is 0) -- EDIT
@@ -77,6 +77,10 @@ def genConf_cqaa():
 
 	affdim = 10;
 	config['affdim'] = affdim;
+
+	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
+	slice_val = 10;
+	config['slice_val'] = slice_val;
 
 	np.savez('config.npz', config=config);
 
