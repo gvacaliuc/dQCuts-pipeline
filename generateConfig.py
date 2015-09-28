@@ -4,11 +4,11 @@ def genConf_dqaa():
 	config = {};
 
 	#	Trajectory to start on -- 0 to start on first
-	startTraj = 1;
+	startTraj = 0;
 	config['startTraj'] = startTraj;
 
 	#	Number of trajectories to include -- EDIT
-	numberOfTraj = 1;
+	numberOfTraj = 10;
 	config['numOfTraj'] = numberOfTraj;
 
 	#	Residue to start on (0 for second -- read ipynb on wqaa on why we exclude 1st res) -- EDIT
@@ -16,8 +16,8 @@ def genConf_dqaa():
 	config['startRes'] = startRes;
 
 	#	Residue to iterate through (includes ith residue if you give positive number, -2 for all but last -- again, read wqaa.ipynb) -- EDIT
-	endRes = -2;
-	config['endRes'] = endRes;
+	numRes = 59;
+	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
 	icadim = 40;
@@ -28,11 +28,11 @@ def genConf_dqaa():
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-	pname = 'kbh';
+	pname = 'NCBD';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
-	numClusters = 16;
+	numClusters = 50;
 	config['numClusters'] = numClusters;
 
 	affdim = 10;
@@ -56,11 +56,11 @@ def genConf_cqaa():
 	config['startRes'] = startRes;
 
 	#	Number of Residues to include (inclusive for cQAA, exclusive for dQAA) -- EDIT
-	numRes = 133;
+	numRes = 198;
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
-	icadim = 40;
+	icadim = 60;
 	config['icadim'] = icadim;
 
 	#	Number of neighbors to query for when assembling affinity matrix
@@ -68,7 +68,7 @@ def genConf_cqaa():
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-	pname = 'kbh';
+	pname = 'hivp';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
