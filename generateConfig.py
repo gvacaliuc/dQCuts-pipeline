@@ -64,7 +64,7 @@ def genConf_cqaa():
 	config['icadim'] = icadim;
 
 	#	Number of neighbors to query for when assembling affinity matrix
-	n_neighbors = 31;
+	n_neighbors = 11;
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
@@ -84,6 +84,10 @@ def genConf_cqaa():
 
 	np.savez('config.npz', config=config);
 
+def generateConfig(i):
+	if i == 0: genConf_cqaa();
+	else: genConf_dqaa();
+
 if __name__ == '__main__':
-	generateConfig();
+	generateConfig(0);
 	
