@@ -78,6 +78,10 @@ def genConf_cqaa():
 	affdim = 10;
 	config['affdim'] = affdim;
 
+	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
+	slice_val = 10;
+	config['slice_val'] = slice_val;
+
 	np.savez('config.npz', config=config);
 
 def generateConfig(i):
