@@ -48,7 +48,7 @@ def genConf_cqaa():
 	config['startTraj'] = startTraj;
 
 	#	Number of trajectories to include -- EDIT
-	numberOfTraj = 5;
+	numberOfTraj = 1;
 	config['numOfTraj'] = numberOfTraj;
 
 	#	Residue to start on (inclusive for cQAA, exclusive for dQAA, first is 0) -- EDIT
@@ -56,7 +56,7 @@ def genConf_cqaa():
 	config['startRes'] = startRes;
 
 	#	Number of Residues to include (inclusive for cQAA, exclusive for dQAA) -- EDIT
-	numRes = 198;
+	numRes = 69;
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
@@ -68,7 +68,7 @@ def genConf_cqaa():
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-	pname = 'hivp';
+	pname = 'ubq';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
