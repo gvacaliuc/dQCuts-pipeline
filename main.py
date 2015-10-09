@@ -17,6 +17,7 @@ parser.add_argument('-s', '--save', action='store_true', dest='save', default=Fa
 parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Prints debugging help.')
 parser.add_argument('-c', '--coord', action='store_true', dest='coord', default=False, help='Runs cQAA instead of dQAA.')
 parser.add_argument('--setup', action='store_true', dest='setup', default=False, help='Runs setup calculations: Cum. Sum. of cov. spectrum\nand unit radius neighbor search.')
+parser.add_argument('--smart', action='store_true', dest='smart', default=False, help='Runs jade using an alternative diagonalization setup. Refer to Cardoso\'s code for more details.')
 
 values = parser.parse_args()
 global val;
