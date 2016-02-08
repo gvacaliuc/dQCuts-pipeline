@@ -17,6 +17,9 @@ parser.add_argument('-s', '--save', action='store_true', dest='save', default=Fa
 parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='Prints debugging help.')
 parser.add_argument('-c', '--coord', action='store_true', dest='coord', default=False, help='Runs cQAA instead of dQAA.')
 parser.add_argument('--setup', action='store_true', dest='setup', default=False, help='Runs setup calculations: Cum. Sum. of cov. spectrum\nand unit radius neighbor search.')
+parser.add_argument('--single', action='store_true', dest='single', default=False, help='Runs jade w/ single precision. NOT recommended.')
+parser.add_argument('--smart', action='store_true', dest='smart', default=False, help='Runs jade using an alternative diagonalization setup. Refer to Cardoso\'s code for more details.')
+parser.add_argument('--ica', type=str, dest='icafile', default='null', help='Skips QAA and allows user to input ICA.');
 
 values = parser.parse_args()
 global val;
@@ -40,31 +43,36 @@ if (config['pname'] == 'PNAME'):
 	raise ValueError('Set \'pname\' to your protein name in \'generateConfig.py\'.');
 	exit()
 
+if val.icafile == 'null':
 #	cQAA	-----------------------------------------------------------------------------
-if val.coord:
-	if val.verbose: timing.log('Beginning cQAA for %s with %i trajectories @ %i dimensions...' %(config['pname'], config['numOfTraj'], config['icadim']));
-	icamat = c.qaa(config, val);
-	if val.save: np.save('savefiles/coord_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icajade']);
-	if val.save: np.save('savefiles/coord_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icacoffs']);
-	icacoffs = icamat['icacoffs'];
-	numSamples = icacoffs.shape[1];
-	if val.verbose: timing.log('cQAA complete...\n\nBeginning search for %i nearest neighbors...' %(config['n_neighbors']));
-else:
+	if val.coord:
+		if val.verbose: timing.log('Beginning cQAA for %s with %i trajectories @ %i dimensions...' %(config['pname'], config['numOfTraj'], config['icadim']));
+		icamat = c.qaa(config, val);
+		if val.save: np.save('savefiles/coord_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icajade']);
+		if val.save: np.save('savefiles/coord_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icacoffs']);
+		icacoffs = icamat['icacoffs'];
+		if val.verbose: timing.log('cQAA complete...\n\nBeginning search for %i nearest neighbors...' %(config['n_neighbors']));
+	else:
 #	dQAA	-----------------------------------------------------------------------------
-	if val.verbose: timing.log('Beginning dQAA for %s with %i trajectories @ %i dimensions...' %(config['pname'], config['numOfTraj'], config['icadim']));
-	icamat = d.qaa(config, val);
-	if val.save: np.save('savefiles/dih_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icajade']);
-	if val.save: np.save('savefiles/dih_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icacoffs']);
-	icacoffs = icamat['icacoffs'];
-	numSamples = icacoffs.shape[1];
-	if val.verbose: timing.log('dQAA complete...\n\nBeginning tree construction...');
+		if val.verbose: timing.log('Beginning dQAA for %s with %i trajectories @ %i dimensions...' %(config['pname'], config['numOfTraj'], config['icadim']));
+		icamat = d.qaa(config, val);
+		if val.save: np.save('savefiles/dih_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icajade']);
+		if val.save: np.save('savefiles/dih_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icacoffs']);
+		icacoffs = icamat['icacoffs'];
+		if val.verbose: timing.log('dQAA complete...\n\nBeginning tree construction...');
+
+else: 
+	icacoffs = np.load(val.icafile);
+	timing.log('Skipping QAA, using \'./%s\' as ICA.' %(val.icafile));
+
+numSamples = icacoffs.shape[1];
 
 #	KNN		-----------------------------------------------------------------------------
 
 #	This step determines how many dimensions we should consider when computing the k-neighbors	
 if val.setup:
 	pts = [];
-	timing.log('setup to determine adequate affinity subspace...');
+	timing.log('Setup to determine adequate affinity subspace...');
 	for i in range(2,config['icadim']):
 		print('Finding neighbors in %i dimensions...' %(i));
 		#	Need to slice every 10 due to computation difficulties with the whole dataset
@@ -89,11 +97,30 @@ if val.setup:
 		config['affdim'] = a;
 
 	#	Have to transpose icacoffs b/c sklearn wants Samples x Sensors
-nbrs = nb(n_neighbors=config['n_neighbors'], algorithm='kd_tree').fit(icacoffs[ :config['affdim'] ].T);
+
+subset = icacoffs[ :config['affdim'] ];
+nbrs = nb(n_neighbors=config['n_neighbors'], algorithm='kd_tree').fit(subset[ :, ::10 ].T);
 
 if val.verbose: timing.log('Tree constructed...\n\nBeginning search for %i nearest neighbors using only %i dimensions...' %(config['n_neighbors'], config['affdim']));
 
-distances, indices = nbrs.kneighbors(icacoffs[ :config['affdim'] ].T);
+ind10 = np.zeros((numSamples, config['n_neighbors']*10));
+junk, ind10[::10,::10] = nbrs.kneighbors(subset[ :, ::10 ].T);
+ind10 = (ind10*10).astype(int);
+ind10[:,0] = np.arange(numSamples);
+add = np.tile(np.arange(10), numSamples).reshape((numSamples, -1), order = 'C');
+
+for i in range(numSamples / 10):
+	for j in range(1,config['n_neighbors']):
+		ind10[ 10*i:10*(i+1), 10*j] = np.arange(ind10[ 10*i, 10*j], ind10[ 10*i, 10*j] + 10);
+
+for i in range(config['n_neighbors']):
+	ind10[:,10*i:10*(i+1)] = np.array( map( lambda x,y: x+y, np.tile(ind10[:,10*i], 10).reshape((numSamples, -1), order='F'), add) );
+
+data_vectors = subset[:, ind10];
+tiled_subset = np.tile(subset, data_vectors.shape[2]).reshape((config['affdim'], numSamples, -1), order = 'F');
+diff = data_vectors - tiled_subset;
+dist = np.sum(diff ** 2.0, axis = 0);
+data = np.exp( - dist.flatten() );
 
 if val.debug and val.save:
 	np.save('savefiles/distances_%s_%in.npy' %(config['pname'], config['n_neighbors']), distances);
@@ -103,9 +130,9 @@ if val.verbose: timing.log('Search complete...\n\nBeginning affinity matrix gene
 
 #	Affgen	-----------------------------------------------------------------------------
 
-indptr = np.arange(0,config['n_neighbors']*numSamples+1, config['n_neighbors']);
-indices = indices.flatten();
-data = np.exp(-(distances.flatten() ** 2.0));
+indptr = np.arange(0,10*config['n_neighbors']*numSamples+1, config['n_neighbors']*10);
+indices = ind10.flatten();
+data = np.exp( -(dist.flatten()) );
 
 affMat = csc_matrix( (data, indices, indptr), shape = (numSamples,numSamples) );
 

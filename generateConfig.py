@@ -8,7 +8,7 @@ def genConf_dqaa():
 	config['startTraj'] = startTraj;
 
 	#	Number of trajectories to include -- EDIT
-	numberOfTraj = 10;
+	numberOfTraj = 5;
 	config['numOfTraj'] = numberOfTraj;
 
 	#	Residue to start on (0 for second -- read ipynb on wqaa on why we exclude 1st res) -- EDIT
@@ -16,7 +16,7 @@ def genConf_dqaa():
 	config['startRes'] = startRes;
 
 	#	Residue to iterate through (includes ith residue if you give positive number, -2 for all but last -- again, read wqaa.ipynb) -- EDIT
-	numRes = 59;
+	numRes = 198;
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
@@ -28,16 +28,20 @@ def genConf_dqaa():
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-	pname = 'NCBD';
+	pname = 'hivp_dihedral';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
-	numClusters = 50;
+	numClusters = 16;
 	config['numClusters'] = numClusters;
 
-	affdim = 10;
+	affdim = 20;
 	config['affdim'] = affdim;
 	
+	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
+	slice_val = 10;
+	config['slice_val'] = slice_val;
+
 	np.savez('config.npz', config=config);
 
 def genConf_cqaa():
@@ -56,7 +60,7 @@ def genConf_cqaa():
 	config['startRes'] = startRes;
 
 	#	Number of Residues to include (inclusive for cQAA, exclusive for dQAA) -- EDIT
-	numRes = 198;
+	numRes = 76;
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
@@ -64,23 +68,26 @@ def genConf_cqaa():
 	config['icadim'] = icadim;
 
 	#	Number of neighbors to query for when assembling affinity matrix
-	n_neighbors = 11;
+	n_neighbors = 31;
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-	pname = 'hivp';
+	pname = 'ubqfull';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
 	numClusters = 16;
 	config['numClusters'] = numClusters;
 
-	affdim = 10;
+	affdim = 20;
 	config['affdim'] = affdim;
 
 	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
-	slice_val = 10;
+	slice_val = 100;
 	config['slice_val'] = slice_val;
+
+	kurtosis_window = 100;
+	config['kurtosis_window'] = kurtosis_window;
 
 	np.savez('config.npz', config=config);
 

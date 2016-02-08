@@ -60,38 +60,59 @@ def getStrID(resname):
 		if acids[i] == resname:
 			return i;
 
-def getChi(u, resid):
+def getChi(u, resid, ind, sliceval):
 	atom = u.selectAtoms(' resid %i ' %(resid) );
 	atom.set_segid('A');
 	angles = []
 	resName = atom.resnames()[0];
+	#print resName;
+	if resName == 'HIE':
+		resName = 'HIS';
 	strid = getStrID(resName);
-	
+
 	for i in range(5):
-		print i
-		data = TimeseriesCollection()
 		if chi[i,strid] >= 0:
+			tmp = [];
 			atom = u.selectAtoms( ' atom A %i %s ' %(resid, getAtomName(strid, i, 0)), \
 							  	  ' atom A %i %s ' %(resid, getAtomName(strid, i, 1)), \
 							  	  ' atom A %i %s ' %(resid, getAtomName(strid, i, 2)), \
 							  	  ' atom A %i %s ' %(resid, getAtomName(strid, i, 3)) 	);
-			data.addTimeseries(Timeseries.Dihedral(atom));
-			angles.append( np.array(data.compute(u.trajectory[::10])) );
+
+			u.trajectory[int(ind*sliceval)];
+			tmp.append( atom.dihedral() );
+
+			angles.append(tmp);
 		else: break;
 
 	return angles;
 
 if __name__ == '__main__':
-	#angles = [];
-	#ind = np.load('savefiles/hivp_clustind_31n_16c.npy');
-	#for i in range(5):
-		u = Universe('hivp/hivp.pdb', 'hivp/hivp_%i.dcd' %(1), permissive = False);
-	#	for j in range( 198 ):
-	#		tmp = [];
-		a = np.array(getChi( u , 1 ))[::10];
-		print a.shape, a;
-	#	angles.append( np.array(tmp) );
+	angles = [];
+	ind = np.load('savefiles/hivp_clustind_31n_16c.npy');
+	u = [];
+	sliceval = 10;
 
-	#np.save('savefiles/angles.npy', angles);
+	for i in range(5):
+		u.append( Universe('hivp/hivp.pdb', 'hivp/hivp_%i.dcd' %(i+1), permissive = False) );
+
+	trajlen = len(u[0].trajectory);
+
+	for i in range(len(ind)):
+		print 'On cluster: ', i+1;
+		clust = [];
+		for k in ind[i]:
+			print 'On index: ', k;
+			tmp = [];
+			for j in range( 198 ):
+				a = np.array(getChi( u[int(k // (trajlen/sliceval))] , j+1 , k % (trajlen/sliceval), sliceval ));
+				tmp.append(a);
+			clust.append(tmp);
+		angles.append(clust);
+		print len(angles);
+		print len(angles[0]);
+		print len(angles[0][0]);
+		print angles[0][0];
+
+	np.save('savefiles/angles.npy', angles);
 
 	
