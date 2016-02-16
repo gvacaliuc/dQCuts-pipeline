@@ -1,3 +1,4 @@
+from __future__ import division
 import numpy as np
 from numpy import *
 import argparse
@@ -66,6 +67,9 @@ else:
 	timing.log('Skipping QAA, using \'./%s\' as ICA.' %(val.icafile));
 
 numSamples = icacoffs.shape[1];
+if val.debug: print numSamples;
+numSamples = numSamples - numSamples % 10;
+if val.debug: print "new numSamples: ", numSamples;
 
 #	KNN		-----------------------------------------------------------------------------
 
@@ -98,7 +102,7 @@ if val.setup:
 
 	#	Have to transpose icacoffs b/c sklearn wants Samples x Sensors
 
-subset = icacoffs[ :config['affdim'] ];
+subset = icacoffs[ :config['affdim'], :numSamples ];
 nbrs = nb(n_neighbors=config['n_neighbors'], algorithm='kd_tree').fit(subset[ :, ::10 ].T);
 
 if val.verbose: timing.log('Tree constructed...\n\nBeginning search for %i nearest neighbors using only %i dimensions...' %(config['n_neighbors'], config['affdim']));
@@ -109,22 +113,46 @@ ind10 = (ind10*10).astype(int);
 ind10[:,0] = np.arange(numSamples);
 add = np.tile(np.arange(10), numSamples).reshape((numSamples, -1), order = 'C');
 
-for i in range(numSamples / 10):
-	for j in range(1,config['n_neighbors']):
-		ind10[ 10*i:10*(i+1), 10*j] = np.arange(ind10[ 10*i, 10*j], ind10[ 10*i, 10*j] + 10);
+#for i in range(numSamples / 10):
+#	for j in range(1,config['n_neighbors']):
+#		ind10[ 10*i:10*(i+1), 10*j] = np.arange(ind10[ 10*i, 10*j], ind10[ 10*i, 10*j] + 10);
+"""
+sub_ind *= 10;
+above = sub_ind.flatten() > numSamples-10
+argsort = np.argsort(above);
+for i in argsort:
+	if i < 1:
+		num_above = i;
+		break;
+above_ind = map( lambda x,y: (x,y), (argsort[:num_above]//config['n_neighbors'])*10, (argsort[:num_above]%config['n_neighbors'])*10);
+for i in above_ind:
+	ind10[i] -= 9;"""
+
+
+for i in range(9):
+	ind10[(i+1)::10, (config['n_neighbors']-1)::config['n_neighbors']] = ind10[::10,(config['n_neighbors']-1)::config['n_neighbors']];
 
 for i in range(config['n_neighbors']):
 	ind10[:,10*i:10*(i+1)] = np.array( map( lambda x,y: x+y, np.tile(ind10[:,10*i], 10).reshape((numSamples, -1), order='F'), add) );
 
-data_vectors = subset[:, ind10];
+ind10[numSamples-10:,:10] -= 2*add[numSamples-10:];
+
+""""data_vectors = subset[:, ind10];
 tiled_subset = np.tile(subset, data_vectors.shape[2]).reshape((config['affdim'], numSamples, -1), order = 'F');
 diff = data_vectors - tiled_subset;
 dist = np.sum(diff ** 2.0, axis = 0);
-data = np.exp( - dist.flatten() );
+data = np.exp( - dist.flatten() );"""
+
+#	Basic loop implementation as vectorized version takes too much memory now
+data = np.zeros((numSamples,config['n_neighbors']*10))
+for i in range(numSamples):
+	for j in range(1,config['n_neighbors']*10):
+		data[i,j] = np.exp(-np.sum((subset[:,ind10[i,j]]-subset[:,i])**2.0));
+	if i%(numSamples//100) == 0: timing.log( 'Affinity: %i%% complete!' %(i//(numSamples//100)) );
+		
 
 if val.debug and val.save:
-	np.save('savefiles/distances_%s_%in.npy' %(config['pname'], config['n_neighbors']), distances);
-	np.save('savefiles/indices_%s_%in.npy' %(config['pname'], config['n_neighbors']), indices);
+	np.save('savefiles/indices_%s_%in.npy' %(config['pname'], config['n_neighbors']), ind10);
 
 if val.verbose: timing.log('Search complete...\n\nBeginning affinity matrix generation...');
 
@@ -132,8 +160,8 @@ if val.verbose: timing.log('Search complete...\n\nBeginning affinity matrix gene
 
 indptr = np.arange(0,10*config['n_neighbors']*numSamples+1, config['n_neighbors']*10);
 indices = ind10.flatten();
-data = np.exp( -(dist.flatten()) );
-
+#data = np.exp( -(dist.flatten()) );
+data = data.flatten();
 affMat = csc_matrix( (data, indices, indptr), shape = (numSamples,numSamples) );
 
 if val.graph:
