@@ -35,7 +35,7 @@ def genConf_dqaa():
 	numClusters = 16;
 	config['numClusters'] = numClusters;
 
-	affdim = 20;
+	affdim = 10;
 	config['affdim'] = affdim;
 	
 	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
@@ -60,11 +60,7 @@ def genConf_cqaa():
 	config['startRes'] = startRes;
 
 	#	Number of Residues to include (inclusive for cQAA, exclusive for dQAA) -- EDIT
-<<<<<<< HEAD
-	numRes = 69;
-=======
 	numRes = 76;
->>>>>>> 7ebd368ab9d05d39045ca00d4943a4ac4258cace
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
@@ -76,18 +72,14 @@ def genConf_cqaa():
 	config['n_neighbors'] = n_neighbors;
 
 	#	Name of protein -- appended to beginning of all save files -- EDIT
-<<<<<<< HEAD
-	pname = 'ubq';
-=======
-	pname = 'ubqfull';
->>>>>>> 7ebd368ab9d05d39045ca00d4943a4ac4258cace
+	pname = 'ubqhalf';
 	config['pname'] = pname;
 
 	#	Number of clusters dncuts should find
 	numClusters = 16;
 	config['numClusters'] = numClusters;
 
-	affdim = 20;
+	affdim = 10;
 	config['affdim'] = affdim;
 
 	#	Only uses every x number of coordinates -- useful for HUGE trajectories.
