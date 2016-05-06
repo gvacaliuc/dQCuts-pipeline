@@ -89,6 +89,12 @@ def genConf_cqaa():
 	kurtosis_window = 100;
 	config['kurtosis_window'] = kurtosis_window;
 
+	numBlock = 10;
+	config['numBlock'] = numBlock;
+
+	spmult_blocksize = 5;
+	config['spmult_blocksize'] = spmult_blocksize;
+
 	np.savez('config.npz', config=config);
 
 def generateConfig(i):
