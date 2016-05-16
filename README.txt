@@ -1,19 +1,19 @@
-dQCuts-pipeline is a full package for the analysis of proteins in python.  It begins by inputting trajectories generated from a Molecular Dynamics simulator such as AMBER, and continues by computing the relvant coordinate or angular data, reducing the dimensionality of the data, generating a similarity graph, and finally clustering the datapoints, each of which correspond to a single conformation the protein forms.
+dQCuts-pipeline is a package to analyze MD simulations.  It begins by inputting trajectories generated from a Molecular Dynamics simulator such as AMBER, and continues by computing the relvant coordinate or angular data, reducing the dimensionality of the data, generating a similarity graph, and finally clustering the datapoints, each of which correspond to a single conformation the protein forms.
 
 Dependencies:
-	I have tried my best to keep the dependencies down, but there are a few:
-		- MDAnalysis	- tool to manipulate the trajectories in python
-		- Numpy		- ubiquitous numerical analysis package
-		- Scipy		- provides sparse matrices
-		- Matplotlib	- ubiquitous graphing package
-		- SciKit-Learn	- provides knn-functionality
+		- MDAnalysis
+		- Numpy
+		- Scipy
+		- Matplotlib
+		- SciKit-Learn
+		- Misc. Python packages ( argparse, collections, etc... )
 
 Setup:
-	As there are two git-repositories housed under this repository, I wanted to alleviate the hassle of setup.  Thus, I created a small script to make all the necessary directories and pull all the necessary git repos.  Just run:
-	$	sh setup.sh		(Internet connection needed)
+	$ sh setup.sh  ( makes some directories and downloads other git directories as necessary )
 
-	After setting up the directory, it is imperative that you edit the file 'generateConfig.py'.  This file is where you tell the entire program how you want it to run.  Be sure to examine each closely as they do affect performance and accuracy.
+	After running setup, edit the file 'generateConfig.py'.  It allows you to configure the code, but it does have default values coded in.  
 
 Use:
-	Pass 'main.py' the flag '-h' or '--help' to get a feel for any flags you may want to pass when running the code.  Look through the code to get an understanding of its actions; all files should be commented well.  The most complex part (hopefully) will be telling 'dQAA' or 'cQAA' where to find your trajectories.  You need to structure the filenames, and also edit 'dQAA.py' or 'cQAA.py' to fit those formats, ideally in a way where you can loop through several trajectories.  The file 'wqaa.ipynb' has a basic example on how I have used it so far.  On a standard desktop machine (Quad-Core, 4GB RAM, 2GHz), the code should complete in a little over 30 minutes, but less than 45 minutes.  It has a timing function built in to show how long everything takes (approximately).
-	
+	Pass 'main.py' the flag '-h' or '--help' to get a feel for any flags you may want to pass when running the code.  Look through the code to get an understanding of its actions; all files should be commented well.  To run any data other than the default data, edit 'cQAA.py' or 'dQAA.py'.
+
+Note: The code will run fine on a Linux PC, but on a mac the clustering code will run into issues.  I have a precompiled shared object running some C-code, so to run it on a mac you'll need to recompile that source.  The source for the shared object is located at www.github.com/gvacaliuc/dncuts_eigensolver/ under packages/c_extensions.  (I believe you should simply be able to run setup_c.py to create a new so, but if you run into errors just send me an email at gabe.vacaliuc@gmail.com and I'll get a dynamic library compiled and post a tutorial for OSX.
