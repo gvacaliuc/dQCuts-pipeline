@@ -2,10 +2,10 @@ from __future__ import division
 import numpy as np
 from numpy import *
 import argparse
-#import wqaa.dQAA as d
-#import wqaa.cQAA as c
-import cQAA as c
-import cQAA as d
+import wqaa.dQAA as d
+import wqaa.cQAA as c
+#import cQAA as c
+#import cQAA as d
 from sklearn.neighbors import NearestNeighbors as nb
 from scipy.sparse import *
 from dncuts_eigensolver.packages.dncuts import *

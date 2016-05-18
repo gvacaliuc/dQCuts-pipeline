@@ -15,8 +15,8 @@ def genConf_dqaa():
 	startRes = 0;
 	config['startRes'] = startRes;
 
-	#	Residue to iterate through (includes ith residue if you give positive number, -2 for all but last -- again, read wqaa.ipynb) -- EDIT
-	numRes = -2;
+	#	Residue to iterate through -- EDIT
+	numRes = 5;
 	config['numRes'] = numRes;
 
 	#	Number of dimensions JADE should consider -- (base off point in plot of cumulative variance with greatest curvature)
