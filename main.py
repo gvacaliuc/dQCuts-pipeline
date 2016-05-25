@@ -81,10 +81,10 @@ if val.icafile == 'null':
 	else:
 #	dQAA	-----------------------------------------------------------------------------
 		if val.verbose: timing.log('Beginning dQAA for %s with %i trajectories @ %i dimensions...' %(config['pname'], config['numOfTraj'], config['icadim']));
-		icamat = d.qaa(config, val);
-		if val.save: np.save('savefiles/dih_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icajade']);
-		if val.save: np.save('savefiles/dih_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icamat['icacoffs']);
-		icacoffs = icamat['icacoffs'];
+		icajade, filename, mapshape = d.qaa(config, val);
+		icacoffs = np.memmap(filename, dtype='float64', shape=mapshape);
+		if val.save: np.save('savefiles/dih_icajade%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icajade);
+		if val.save: np.save('savefiles/dih_icacoffs%s_%id_%i-%it.npy' %(config['pname'], config['icadim'], config['startTraj']+1, config['startTraj']+config['numOfTraj']), icacoffs[:,:]);
 		if val.verbose: timing.log('dQAA complete...\n\nBeginning tree construction...');
 
 else:
