@@ -1,0 +1,18 @@
+analysis: 'coordinate'
+pdbfile: 'pentapeptide/init-ww-penta.pdb'
+dcdfiles:
+    - 'pentapeptide/job1-protein.dcd'
+    - 'pentapeptide/job2-protein.dcd'
+pname: 'pentapeptide'
+startRes: 1
+endRes: 5
+icaDim: 8
+sliceVal: 1
+n_neighbors: 31
+affdim: 5
+aff_numblock: 10
+mult_numblock: 1
+n_eigv: 16
+saveDir: 'savefiles/'
+figDir: 'savefiles/figures'
+logfile: 'log.txt'
