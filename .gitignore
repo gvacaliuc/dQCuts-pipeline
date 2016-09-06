@@ -1,0 +1,8 @@
+wqaa
+*.npy
+*.array
+dncuts_eigensolver
+qaa_simgen
+savefiles/
+pentapeptide
+log*
