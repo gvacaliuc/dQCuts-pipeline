@@ -1,11 +1,11 @@
 analysis: 'coordinate'
 pdbfile: 'pentapeptide/init-ww-penta.pdb'
-dcdfiles:
-    - 'pentapeptide/job1-protein.dcd'
-    - 'pentapeptide/job2-protein.dcd'
+dcdform:
+    - 'pentapeptide/job**-protein.dcd'
+    - '1-25'
 pname: 'pentapeptide'
-startRes: 1
-endRes: 5
+startRes: 0
+endRes: 4
 icaDim: 8
 sliceVal: 1
 n_neighbors: 31

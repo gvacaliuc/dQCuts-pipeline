@@ -6,6 +6,12 @@ from wqaa.main import main as wqaa_main
 from qaa_simgen.main import main as simgen_main
 from dncuts_eigensolver.main import main as dncuts_main
 from scipy.sparse import *
+import yaml
+import os
+import logging
+
+log = logging.getLogger('main');
+log.setLevel(logging.DEBUG);
 
 #================================================================================
 #	Supplementary Code
@@ -32,31 +38,36 @@ def update_progress(progress):
     sys.stdout.flush()
 #=================================================================================
 
+def print_dict(config):
+    for key in config.keys():
+        print '{0}: {1}'.format(key, config[key]);
+    print '\n';
+
 def main(config):
 
-    #   Init
-    
     #   QAA
     config['numblock'] = config['aff_numblock'];
-    wqaa_main(config);
+    wqaa_main(config);    
 
     #   Similarity Matrix Generation
     config['icafile'] = os.path.join(config['saveDir'],'{0}_icacoffs_{1}dim.array'.format(config['pname'],config['icaDim']));
     simgen_main(config);
-
+    
     #   Clustering
     config['numblock'] = config['mult_numblock'];
-    config['aff'] = os.path.join(saveDir, 
+    config['aff'] = os.path.join(config['saveDir'], 
                                 '{0}_aff_{1}d_{2}n.npz'.format(config['pname'], 
-                                                               icacoffs.shape[0],
+                                                               config['icaDim'],
                                                                config['n_neighbors'],
                                                               ),
                                 );
     dncuts_main(config);
 
+    #   May add k-means clustering of eigenvectors at some point
+
 def validate(config):
 
-    required = ['numblock', 'logfile', 'saveDir', 'figDir','pname', 
+    required = ['aff_numblock', 'mult_numblock', 'logfile', 'saveDir', 'figDir','pname', 
                 'n_neighbors', 'affdim', 'analysis', 'pdbfile', 'startRes',
                 'endRes',];
     for field in required:
